@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.caichang.dao.user.UserDao">
+	
+    <!-- 用户模型 -->
+	<resultMap type="com.caichang.model.user.UserModel" id="userModel">
+		<id column="user_id" property="userId"/>
+		<result property="dictId" column="dict_id"></result>
+		<result property="userName" column="user_name"></result>
+	</resultMap>
+	
+	<!-- 根据用户对象查村当前用户 -->
+	<select id="getUserModelByModel" resultMap="userModel" parameterType="com.caichang.model.user.UserModel">
+		SELECT ut.user_id as user_id,dt.dict_id as dict_id,dt.dict_value AS userName
+		FROM caichang.user_t ut
+		LEFT JOIN caichang.dict_t dt ON ut.user_dec_id = dt.dict_id
+		WHERE dt.dict_id = #{dictId}
+		AND dt.dict_name = 1
+	</select>
+	
+</mapper>

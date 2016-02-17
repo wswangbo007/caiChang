@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.caichang.dao.victualdate.VictualDateDao">
+	
+    <!-- 用户模型 -->
+	<resultMap type="com.caichang.model.victualdate.VictualDateModel" id="victualDateModel">
+		<id column="buy_victual_date_id" property="buyVictualDateId"/>
+		<result column="buy_victual_date" property="buyVictualDate"/>
+		<result column="victual_id" property="victualId"/>
+		<result column="buy_victual_date_key" property="buyVictualDateKey"/>
+		<result column="buy_victual_weight" property="buyVictualWeight"/>
+		<result column="dict_id" property="dictId"/>
+		<result column="is_buy" property="isBuy"/>
+		<result column="create_date" property="createDate"/>
+		<result column="update_date" property="updateDate"/>
+		<result column="state" property="state"/>
+	</resultMap>
+	
+	<!-- 继承过来的MODEL -->
+	<resultMap type="com.caichang.model.victualdate.VictualDateBuyModel" id="victualDateBuyModel">
+		<id column="buy_victual_date_id" property="buyVictualDateId"/>
+		<result column="buy_victual_date" property="buyVictualDate"/>
+		<result column="num_count" property="numCount"/>
+		<result column="victual_id" property="victualId"/>
+		<result column="buy_victual_date_key" property="buyVictualDateKey"/>
+		<result column="buy_victual_weight" property="buyVictualWeight"/>
+		<result column="is_buy" property="isBuy"/>
+		<result column="create_date" property="createDate"/>
+		<result column="update_date" property="updateDate"/>
+		<result column="state" property="state"/>
+		<result column="victual_name" property="victualName"/>
+		<result column="dict_value" property="dictValue"/>
+	</resultMap>
+	
+	<!-- 增加蔬菜时间购买对象 -->
+	<insert id="addVictualDate" parameterType="com.caichang.model.victualdate.VictualDateModel">
+		INSERT INTO caichang.buy_victual_date_t(buy_victual_date_id,buy_victual_date,victual_id,buy_victual_date_key,buy_victual_weight,is_buy,create_date,update_date,state,dict_id)
+		SELECT #{buyVictualDateId},#{buyVictualDate},#{victualId},#{buyVictualDateKey},#{buyVictualWeight},#{isBuy},
+		#{createDate},#{updateDate},#{state},#{dictId} from dual
+		WHERE NOT EXISTS
+		(SELECT victual_id
+		FROM caichang.buy_victual_date_t
+		WHERE buy_victual_date = #{buyVictualDate} AND victual_id = #{buyVictualDateId})
+	</insert>
+	
+	<!-- 更改蔬菜时间购物对爱 -->
+	<update id="updateVictualDate" parameterType="com.caichang.model.victualdate.VictualDateModel">
+		UPDATE caichang.buy_victual_date_t
+		SET is_buy = #{isBuy}
+		where buy_victual_date_id = #{buyVictualDateId}
+	</update>
+	
+	<!-- 删除蔬菜时间购物 -->
+	<delete id="deleteVictualDate" parameterType="java.util.List">
+		DELETE FROM 
+		caichang.buy_victual_date_t
+		where buy_victual_date_id in 
+		<foreach collection="list" index="index" item="item" open="(" separator="," close=")">
+			#{item.buyVictualDateId}
+		</foreach>
+	</delete>
+	
+	<!-- 查询所有的蔬菜时间购买集合 -->
+	<select id="queryVictualDateByParams" parameterType="java.util.Map" resultMap="victualDateBuyModel">
+		SELECT count(1) as num_count,buy_victual_date
+		FROM caichang.buy_victual_date_t
+		GROUP BY buy_victual_date
+		ORDER BY buy_victual_date DESC
+	</select>
+	
+	<!-- 查询单个对象 -->
+	<select id="queryVictualDateListByParams" parameterType="java.util.Map" resultMap="victualDateBuyModel">
+		SELECT bvdt.buy_victual_date_id,bvdt.buy_victual_date,bvdt.victual_id,vt.victual_name,
+		bvdt.buy_victual_date_key,bvdt.buy_victual_weight,bvdt.dict_id,dt.dict_value
+		FROM caichang.buy_victual_date_t bvdt
+		LEFT JOIN caichang.victual_t vt ON bvdt.victual_id = vt.victual_id
+		LEFT JOIN caichang.dict_t dt ON bvdt.dict_id = dt.dict_id
+		WHERE bvdt.buy_victual_date = #{buyVictualDate}
+		AND dt.dict_name = 2
+	</select>
+</mapper>

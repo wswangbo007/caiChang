@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.caichang.dao.victual.VictualDao">
+	
+    <!-- 用户模型 -->
+	<resultMap type="com.caichang.model.victual.VictualModel" id="vitualModel">
+		<id property="victualId" column="victual_id"/>
+		<result property="victualKey" column="victual_key"/>
+		<result property="victualName" column="victual_name"/>
+		<result property="createDate" column="create_date"/>
+		<result property="updateDate" column="update_date"/>
+		<result property="state" column="state"/>
+	</resultMap>
+	
+	<!-- 添加蔬菜 -->
+	<insert id="addVictualModel" parameterType="com.caichang.model.victual.VictualModel">
+		INSERT INTO caichang.victual_t(victual_id,victual_key,victual_name,create_date,update_date,state)
+		SELECT #{victualId},#{victualKey},#{victualName},#{createDate},#{updateDate},#{state} FROM DUAL WHERE NOT EXISTS(SELECT victual_name FROM caichang.victual_t WHERE victual_name = #{victualName})
+	</insert>
+	
+	<!-- 查询蔬菜 -->
+	<select id="queryVictualList" parameterType="com.caichang.model.victual.VictualModel" resultMap="vitualModel">
+		select victual_id,victual_key,victual_name,create_date,update_date,state
+		FROM caichang.victual_t
+		GROUP BY victual_name
+	</select>
+	
+</mapper>

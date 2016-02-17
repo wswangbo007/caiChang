@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.caichang.dao.dict.DictDao">
+	
+    <!-- 用户模型 -->
+	<resultMap type="com.caichang.model.dict.DictModel" id="dictModel">
+		<id column="dict_id" property="dictId"/>
+		<result property="dictName" column="dict_name"></result>
+		<result property="dictValue" column="dict_value"></result>
+	</resultMap>
+	
+	<!-- 根据用户对象查村当前用户 -->
+	<select id="getDictList" resultMap="dictModel" parameterType="java.util.Map">
+	    SELECT dict_id,dict_name,dict_value
+		FROM caichang.dict_t
+		WHERE dict_name = #{key}
+	</select>
+	
+	<!-- 添加字典数据 -->
+	<insert id="addDict" parameterType="com.caichang.model.dict.DictModel">
+		INSERT INTO caichang.dict_t(dict_name,dict_value)
+		VALUES(#{dictName},#{dictValue})
+	</insert>
+	
+</mapper>

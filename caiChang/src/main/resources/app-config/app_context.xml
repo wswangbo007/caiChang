@@ -1,0 +1,123 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:cache="http://www.springframework.org/schema/cache"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:task="http://www.springframework.org/schema/task"
+	xsi:schemaLocation="http://www.springframework.org/schema/cache 
+						http://www.springframework.org/schema/cache/spring-cache-4.2.xsd
+						http://www.springframework.org/schema/beans   
+	                        http://www.springframework.org/schema/beans/spring-beans.xsd  
+	                        http://www.springframework.org/schema/context   
+	                        http://www.springframework.org/schema/context/spring-context.xsd   
+	                        http://www.springframework.org/schema/tx
+	                        http://www.springframework.org/schema/tx/spring-tx-4.2.xsd
+	                        http://www.springframework.org/schema/aop
+	                        http://www.springframework.org/schema/aop/spring-aop-4.2.xsd
+	                        http://www.springframework.org/schema/task
+	                        http://www.springframework.org/schema/task/spring-task-4.2.xsd
+	                        ">
+
+	<context:annotation-config></context:annotation-config>
+
+	<!-- 扫描指定路径包中的注解 -->
+	<context:component-scan base-package="com.caichang,com.bigdata"
+		use-default-filters="true" />
+
+	<context:property-placeholder location="classpath:properties/*.properties" />
+
+	<!-- Email -->
+	<import resource="app_email.xml" />
+
+	<!-- 打开aop对@Aspectj的注解支持 ,相当于为注解提供解析功能 -->
+	<aop:aspectj-autoproxy />
+
+	<!-- 配置哪些类的方法需要进行事务管理 -->
+	<aop:config>
+		<aop:pointcut expression="execution(* com.caichang.service.*.impl.*.*(..))"
+			id="executionPointcut" />
+		<aop:advisor advice-ref="txAdvice" pointcut-ref="executionPointcut" />
+	</aop:config>
+
+	<!-- 配置事务特性 -->
+	<tx:advice id="txAdvice" transaction-manager="transactionManager">
+		<tx:attributes>
+			<tx:method name="add*" propagation="REQUIRED" />
+			<tx:method name="del*" propagation="REQUIRED" />
+			<tx:method name="update*" propagation="REQUIRED" />
+			<tx:method name="get*" propagation="REQUIRED" />
+			<tx:method name="query*" propagation="REQUIRED" />
+			<tx:method name="*" read-only="true" />
+		</tx:attributes>
+	</tx:advice>
+
+	<!-- AOP 依赖注入 -->
+	<!-- <bean id="myAspactUtil" class="com.wb.util.AspactUtil"></bean> -->
+
+	<!-- data数据源 -->
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
+		destroy-method="close">
+		<property name="driverClassName" value="${wb.driver}" />
+		<property name="url" value="${wb.url}" />
+		<property name="username" value="${wb.username}" />
+		<property name="password" value="${wb.password}" />
+<!-- 		<property name="maxIdle" value="${wb.maxIdle}" /> -->
+<!-- 		<property name="maxActive" value="${wb.maxActive}" /> -->
+<!-- 		<property name="initialSize" value="${wb.initialSize}" /> -->
+<!-- 		<property name="maxWait" value="${wb.maxWait}" /> -->
+	</bean>
+
+	<!-- dataSource: 数据源 typeAliasesPackage: 将指定包下model类型，注册别名(默认为model非限定名且首字母小写) 
+		mybatis默认注册的别名 org.apache.ibatis.type.TypeAliasRegistry configLocation: mybatis配置文件 
+		mapperLocations: mapper映射文件 -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="configLocation" value="classpath:mybatis-config.xml" />
+		<property name="mapperLocations" value="classpath*:mybatis-config/**/*.Mapper.xml" />
+	</bean>
+
+	<!--创建持久层Mybatis代理对象 -->
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage" value="com.caichang.dao,com.bigdata.dao" />
+		<property name="annotationClass" value="org.springframework.stereotype.Repository" />
+		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" />
+	</bean>
+
+	<!-- 事务管理器 -->
+	<bean id="transactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+	<cache:annotation-driven cache-manager="cacheManager" />
+
+	<bean id="cacheManagerFactory"
+		class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">
+		<property name="configLocation" value="classpath:ehcache.xml" />
+	</bean>
+
+	<bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheCacheManager">
+		<property name="cacheManager" ref="cacheManagerFactory" />
+	</bean>
+
+	<!-- 注解实现事务 -->
+	<tx:annotation-driven proxy-target-class="true"
+		transaction-manager="transactionManager" />
+
+	<!-- 定时器类 -->
+	<bean id="sendEmailAndIpJob" class="com.caichang.util.SendEmailAndRequestIpJob"></bean>
+	
+	<!-- 填充测试数据 -->
+	<bean id="insertData" class="com.caichang.util.InsertEmployeeData"></bean>
+	
+	<!-- 防止数据库连接失效 -->
+	<bean id="queryMysqlTimeOut" class="com.caichang.util.QueryMySqlTimeOut"></bean>
+
+	<!-- 定时器 -->
+	<task:scheduled-tasks>
+		<!-- 每天6点准时发送公网IP地址 -->
+        <task:scheduled ref="sendEmailAndIpJob" method="sendEmailJob" cron="0 0 6 * * ?"/>
+        <!-- 防止连接数据库失效 -->
+<!--         <task:scheduled ref="queryMysqlTimeOut" method="timeOut" cron="0 0 2,6,10,14,18,22 * * ?"/> -->
+        <!-- 每一分钟插入90000的数据,填充Employee 测试数据 -->
+        <task:scheduled ref="insertData" method="InsertData" cron="0 0/1 * * * ?"/>
+	</task:scheduled-tasks>
+</beans>
