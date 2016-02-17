@@ -28,7 +28,15 @@
 	<import resource="app_email.xml" />
 
 	<!-- 打开aop对@Aspectj的注解支持 ,相当于为注解提供解析功能 -->
-	<aop:aspectj-autoproxy />
+	<aop:aspectj-autoproxy proxy-target-class="true"/>
+	
+	<!-- AOP动态切换数据源 -->
+<!-- 	<aop:config> -->
+<!-- 		<aop:pointcut expression="(execution (* com.caichang.service.*.impl.*.*(..))) OR (execution (* com.bigdata.service.*.impl.*.*(..)))" id="dataSourcePointcut"/> -->
+<!-- 		<aop:aspect ref="aopGetDataSrouce"> -->
+<!-- 			<aop:before method="getPageName" pointcut-ref="dataSourcePointcut"/> -->
+<!-- 		</aop:aspect> -->
+<!-- 	</aop:config> -->
 
 	<!-- 配置哪些类的方法需要进行事务管理 -->
 	<aop:config>
@@ -50,21 +58,34 @@
 	</tx:advice>
 
 	<!-- AOP 依赖注入 -->
-	<!-- <bean id="myAspactUtil" class="com.wb.util.AspactUtil"></bean> -->
+	<bean id="myAspactUtil" class="com.caichang.util.AopGetDataSourceUtil"></bean>
 
-	<!-- data数据源 -->
-	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
+	<!-- caiChang data数据源 -->
+	<bean id="caichangDataSource" class="org.apache.commons.dbcp.BasicDataSource"
 		destroy-method="close">
-		<property name="driverClassName" value="${wb.driver}" />
-		<property name="url" value="${wb.url}" />
-		<property name="username" value="${wb.username}" />
-		<property name="password" value="${wb.password}" />
-<!-- 		<property name="maxIdle" value="${wb.maxIdle}" /> -->
-<!-- 		<property name="maxActive" value="${wb.maxActive}" /> -->
-<!-- 		<property name="initialSize" value="${wb.initialSize}" /> -->
-<!-- 		<property name="maxWait" value="${wb.maxWait}" /> -->
+		<property name="driverClassName" value="${caiChang.driver}" />
+		<property name="url" value="${caiChang.url}" />
+		<property name="username" value="${caiChang.username}" />
+		<property name="password" value="${caiChang.password}" />
+		<property name="maxIdle" value="${caiChang.maxIdle}" />
+		<property name="maxActive" value="${caiChang.maxActive}" />
+		<property name="initialSize" value="${caiChang.initialSize}" />
+		<property name="maxWait" value="${caiChang.maxWait}" />
 	</bean>
-
+	
+	<!-- caiChang data数据源 -->
+	<bean id="myCatDataSource" class="org.apache.commons.dbcp.BasicDataSource"
+		destroy-method="close">
+		<property name="driverClassName" value="${myCat.driver}" />
+		<property name="url" value="${myCat.url}" />
+		<property name="username" value="${myCat.username}" />
+		<property name="password" value="${myCat.password}" />
+		<property name="maxIdle" value="${myCat.maxIdle}" />
+		<property name="maxActive" value="${myCat.maxActive}" />
+		<property name="initialSize" value="${myCat.initialSize}" />
+		<property name="maxWait" value="${myCat.maxWait}" />
+	</bean>
+	
 	<!-- dataSource: 数据源 typeAliasesPackage: 将指定包下model类型，注册别名(默认为model非限定名且首字母小写) 
 		mybatis默认注册的别名 org.apache.ibatis.type.TypeAliasRegistry configLocation: mybatis配置文件 
 		mapperLocations: mapper映射文件 -->
@@ -72,6 +93,17 @@
 		<property name="dataSource" ref="dataSource" />
 		<property name="configLocation" value="classpath:mybatis-config.xml" />
 		<property name="mapperLocations" value="classpath*:mybatis-config/**/*.Mapper.xml" />
+	</bean>
+	
+	<!-- 注入动态数据源 -->
+	<bean id="dataSource" class="com.caichang.util.DynamicDataSource">
+	    <property name="targetDataSources">
+	        <map>
+				<entry value-ref="caichangDataSource" key="caiChang"></entry>
+				<entry value-ref="myCatDataSource" key="myCat"></entry>
+	        </map>
+	    </property>
+	    <property name="defaultTargetDataSource" ref="myCatDataSource"/>
 	</bean>
 
 	<!--创建持久层Mybatis代理对象 -->
@@ -118,6 +150,6 @@
         <!-- 防止连接数据库失效 -->
 <!--         <task:scheduled ref="queryMysqlTimeOut" method="timeOut" cron="0 0 2,6,10,14,18,22 * * ?"/> -->
         <!-- 每一分钟插入90000的数据,填充Employee 测试数据 -->
-        <task:scheduled ref="insertData" method="InsertData" cron="0 0/1 * * * ?"/>
+<!--         <task:scheduled ref="insertData" method="InsertData" cron="0 0/1 * * * ?"/> -->
 	</task:scheduled-tasks>
 </beans>
