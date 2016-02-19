@@ -89,4 +89,13 @@ public class EmployeeServiceImpl implements EmployeeService {
 	public int getEmployeeAllCount() {
 		return employeeDao.getEmployeeAllCount();
 	}
+
+	@Override
+	public Employee getEmployeeById(Employee employee) {
+		Employee tempEmployee = null;
+		if (null != employee) {
+			tempEmployee = employeeDao.getEmployeeById(employee);
+		}
+		return tempEmployee;
+	}
 }

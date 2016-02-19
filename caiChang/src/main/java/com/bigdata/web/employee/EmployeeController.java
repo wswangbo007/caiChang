@@ -6,7 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 
+import com.bigdata.model.employee.Employee;
 import com.bigdata.model.employee.SearchModel;
 import com.bigdata.service.employee.EmployeeService;
 import com.google.common.collect.Maps;
@@ -17,6 +19,13 @@ public class EmployeeController {
 	
 	@Autowired
 	private EmployeeService employeeService;
+	
+	@RequestMapping(value="showQueryDataToJsp")
+	public ModelAndView showQueryDataToJsp(String name) {
+		ModelAndView modelAndView = new ModelAndView("employee/showDataViewList");
+		modelAndView.addObject("name", name);
+		return modelAndView; 
+	}
 
 	/**
 	 * 获取相关参数的总个数
@@ -45,5 +54,17 @@ public class EmployeeController {
 		int count = employeeService.getEmployeeAllCount();
 		result.put("count",count);
 		return result;
+	}
+	
+	/**
+	 * 根据ID查询
+	 * @return
+	 */
+	@RequestMapping(value="getEmployeeById")
+	public ModelAndView getEmployeeById(Employee employee) {
+		ModelAndView modelAndView = new ModelAndView("employee/dataDetails");
+		Employee tempEmployee = employeeService.getEmployeeById(employee);
+		modelAndView.addObject("employee",tempEmployee);
+		return modelAndView;
 	}
 }

@@ -2,6 +2,8 @@
  * 共用JS
  */
 
+var commonParams = {};
+
 /**
  * AJAX
  */
@@ -47,7 +49,7 @@ var liHtml = function(href,value) {
 	if ('' == href) {
 		href = "#";
 	}
-	var liHtml = "<li><a href="+href+">"+value+"</a></li>";
+	var liHtml = $("<li><a href="+href+">"+value+"</a></li>");
 	return liHtml;
 }
 

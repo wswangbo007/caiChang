@@ -53,4 +53,10 @@
 		FROM EMPLOYEE
 	</select>
 	
+	<select id="getEmployeeById" parameterType="com.bigdata.model.employee.SearchModel" resultMap="employee">
+	    SELECT ID,NAME,SHARDING_ID
+	    FROM EMPLOYEE
+	    WHERE ID = #{id}
+	</select>
+	
 </mapper>

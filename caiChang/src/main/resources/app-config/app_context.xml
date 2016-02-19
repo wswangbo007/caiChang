@@ -148,7 +148,7 @@
 		<!-- 每天6点准时发送公网IP地址 -->
         <task:scheduled ref="sendEmailAndIpJob" method="sendEmailJob" cron="0 0 6 * * ?"/>
         <!-- 防止连接数据库失效 -->
-<!--         <task:scheduled ref="queryMysqlTimeOut" method="timeOut" cron="0 0 2,6,10,14,18,22 * * ?"/> -->
+        <task:scheduled ref="queryMysqlTimeOut" method="timeOut" cron="0 0 2,6,10,14,18,22 * * ?"/>
         <!-- 每一分钟插入90000的数据,填充Employee 测试数据 -->
 <!--         <task:scheduled ref="insertData" method="InsertData" cron="0 0/1 * * * ?"/> -->
 	</task:scheduled-tasks>

@@ -36,4 +36,11 @@ public interface EmployeeDao {
 	 * @return
 	 */
 	int getEmployeeAllCount();
+	
+	/**
+	 * 根据ID查询
+	 * @param employee
+	 * @return
+	 */
+	Employee getEmployeeById(Employee employee);
 }
