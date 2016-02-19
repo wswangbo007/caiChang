@@ -17,6 +17,7 @@ public class QueryMySqlTimeOut {
 	 * 连接数据库,防止Connection失效
 	 */
 	public void timeOut() {
+		DbContextHolder.setDbType(DataSourceTypeName.CAICHANG);
 		victualServiceImpl.queryVictualList();
 	}
 }

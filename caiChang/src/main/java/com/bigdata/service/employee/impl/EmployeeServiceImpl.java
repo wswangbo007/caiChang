@@ -10,6 +10,8 @@ import com.bigdata.dao.employee.EmployeeDao;
 import com.bigdata.model.employee.Employee;
 import com.bigdata.model.employee.SearchModel;
 import com.bigdata.service.employee.EmployeeService;
+import com.caichang.util.DataSourceTypeName;
+import com.caichang.util.DbContextHolder;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -37,6 +39,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 		}
 		List<Employee> tempEmployeeList = employeeData.getEmployeeList();
 		System.out.println(tempEmployeeList.size());
+		DbContextHolder.setDbType(DataSourceTypeName.MYCAT);			// 切换数据库
 		int result = employeeDao.addEmployeeList(tempEmployeeList);
 		return result;
 	}

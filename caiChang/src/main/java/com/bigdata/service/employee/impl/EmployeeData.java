@@ -18,7 +18,6 @@ public class EmployeeData implements Runnable, Serializable {
 	private static final long serialVersionUID = 1L;
 
 	private List<Employee> employeeList;
-	
 
 	public List<Employee> getEmployeeList() {
 		return employeeList;
@@ -30,12 +29,11 @@ public class EmployeeData implements Runnable, Serializable {
 		this.employeeList = employeeList;
 	}
 	
-	
 	@Override
 	public void run() {
 		int i = 1;
 		System.out.println(Thread.currentThread().getName());
-		while (i <= 20000) {
+		while (i <= 17000) {
 			i++;
 			int flag = Integer.valueOf(Thread.currentThread().getName());
 			Employee employee = getEmployeeByFlag(flag);
