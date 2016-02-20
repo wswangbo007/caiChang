@@ -26,7 +26,7 @@
 		<div data-role="content">
 			<h2>搜索26个字母</h2>
 			<div data-role="content">
-				<input type="text" id="searchIndex" placeholder="搜索单个字母">
+				<input type="text" id="searchIndex" placeholder="搜索字母">
 				<!-- 				<select -->
 				<!-- 					id="selectIndex"> -->
 				<!-- 					<option value="-1">全部</option> -->
@@ -40,6 +40,7 @@
 				</div>
 				<br>
 				<div>
+					<h2>click</h2>
 					<ul id="dataList" data-role="listview">
 					</ul>
 				</div>
