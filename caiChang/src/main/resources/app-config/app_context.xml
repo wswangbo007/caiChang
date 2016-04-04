@@ -39,23 +39,23 @@
 <!-- 	</aop:config> -->
 
 	<!-- 配置哪些类的方法需要进行事务管理 -->
-	<aop:config>
-		<aop:pointcut expression="execution(* com.caichang.service.*.impl.*.*(..))"
-			id="executionPointcut" />
-		<aop:advisor advice-ref="txAdvice" pointcut-ref="executionPointcut" />
-	</aop:config>
+<!-- 	<aop:config> -->
+<!-- 		<aop:pointcut expression="execution(* com.caichang.service.*.impl.*.*(..))" -->
+<!-- 			id="executionPointcut" /> -->
+<!-- 		<aop:advisor advice-ref="txAdvice" pointcut-ref="executionPointcut" /> -->
+<!-- 	</aop:config> -->
 
 	<!-- 配置事务特性 -->
-	<tx:advice id="txAdvice" transaction-manager="transactionManager">
-		<tx:attributes>
-			<tx:method name="add*" propagation="REQUIRED" />
-			<tx:method name="del*" propagation="REQUIRED" />
-			<tx:method name="update*" propagation="REQUIRED" />
-			<tx:method name="get*" propagation="REQUIRED" />
-			<tx:method name="query*" propagation="REQUIRED" />
-			<tx:method name="*" read-only="true" />
-		</tx:attributes>
-	</tx:advice>
+<!-- 	<tx:advice id="txAdvice" transaction-manager="transactionManager"> -->
+<!-- 		<tx:attributes> -->
+<!-- 			<tx:method name="add*" propagation="REQUIRED" /> -->
+<!-- 			<tx:method name="del*" propagation="REQUIRED" /> -->
+<!-- 			<tx:method name="update*" propagation="REQUIRED" /> -->
+<!-- 			<tx:method name="get*" propagation="REQUIRED" /> -->
+<!-- 			<tx:method name="query*" propagation="REQUIRED" /> -->
+<!-- 			<tx:method name="*" read-only="true" /> -->
+<!-- 		</tx:attributes> -->
+<!-- 	</tx:advice> -->
 
 	<!-- AOP 依赖注入 -->
 	<bean id="myAspactUtil" class="com.caichang.util.AopGetDataSourceUtil"></bean>
@@ -103,7 +103,7 @@
 				<entry value-ref="myCatDataSource" key="myCat"></entry>
 	        </map>
 	    </property>
-	    <property name="defaultTargetDataSource" ref="myCatDataSource"/>
+	    <property name="defaultTargetDataSource" ref="caichangDataSource"/>
 	</bean>
 
 	<!--创建持久层Mybatis代理对象 -->
