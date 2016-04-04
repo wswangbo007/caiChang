@@ -3,7 +3,8 @@ package com.caichang.service.dict.impl;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.annotation.Resource;
+
 import org.springframework.stereotype.Service;
 
 import com.caichang.dao.dict.DictDao;
@@ -15,13 +16,14 @@ import com.google.common.collect.Lists;
  * 字典
  * @author wangB
  */
-@Service
+@Service("dictService")
 public class DictServiceImpl implements DictService {
 	
-	@Autowired
+	@Resource(name="dictDao")
 	private DictDao dictDao;
 	
 	public List<DictModel> getDictList(Map<String, String> paramMap) {
+		System.err.println("SERVICE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 		List<DictModel> dictList = Lists.newArrayList();
 		if (null != paramMap && !paramMap.isEmpty()) {
 			dictList = dictDao.getDictList(paramMap);

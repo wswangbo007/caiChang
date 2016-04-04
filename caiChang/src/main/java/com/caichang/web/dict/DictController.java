@@ -3,9 +3,11 @@ package com.caichang.web.dict;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.annotation.Resource;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.caichang.model.dict.DictModel;
@@ -20,7 +22,7 @@ import com.google.common.collect.Maps;
 @RequestMapping(value="dict")
 public class DictController {
 	
-	@Autowired
+	@Resource(name="dictService")
 	private DictService dictService;
 
 	/**
@@ -30,7 +32,7 @@ public class DictController {
 	 */
 	@RequestMapping(value="getDictByKey")
 	@ResponseBody
-	public Object getDictByKey(String key) {
+	public Object getDictByKey(@RequestParam("key")String key) {
 		Map<String,String> paramMap = Maps.newHashMap();
 		Map<String,Object> resultMap = Maps.newHashMap();
 		paramMap.put("key", key);

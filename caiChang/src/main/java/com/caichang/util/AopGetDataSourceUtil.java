@@ -29,6 +29,7 @@ public class AopGetDataSourceUtil {
 	public void getPageName(JoinPoint point) throws Throwable {
 		Object obj = point.getTarget();
 		String pageName = obj.getClass().getPackage().toString();
+		System.err.println(pageName);
 		if (pageName.contains("caichang")) {
 			DbContextHolder.setDbType(DataSourceTypeName.CAICHANG);
 		} else if (pageName.contains("bigdata")) {

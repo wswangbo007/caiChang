@@ -12,7 +12,7 @@ import com.caichang.model.dict.DictModel;
  * @author Administrator
  *
  */
-@Repository
+@Repository("dictDao")
 public interface DictDao {
 
 	/**
